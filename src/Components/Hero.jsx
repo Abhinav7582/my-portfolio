@@ -38,11 +38,11 @@ function Hero() {
           sequence={[
             "Data Analyst · AdTech & Product Analytics",
             2000,
-            "Building automated DSP monitoring pipelines",
+            "Building Automated Monitoring Pipelines",
             2000,
-            "Turning ambiguous problems into scalable solutions",
+            "Turning Ambiguous Problems into Scalable Solutions",
             2000,
-            "ML · SQL · Python · Power BI · Sigma",
+            "SQL · Python · Pyspark · Git · NLP · Dashboarding ",
             2000,
           ]}
           wrapper="span"
@@ -67,26 +67,33 @@ function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 1.0 }}
-      >
-        <a
-          href="#projects"
-          className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-medium transition-all hover:shadow-lg hover:shadow-blue-500/25"
         >
-          View Projects
+        <a
+            href="#projects"
+            className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-medium transition-all hover:shadow-lg hover:shadow-blue-500/25"
+        >
+            View Projects
         </a>
         <a
-          href="#experience"
-          className="border border-gray-600 hover:border-blue-400/50 text-gray-300 hover:text-white px-6 py-3 rounded-full transition-all hover:bg-white/5"
+            href="#experience"
+            className="border border-gray-600 hover:border-blue-400/50 text-gray-300 hover:text-white px-6 py-3 rounded-full transition-all hover:bg-white/5"
         >
-          My Experience
+            My Experience
         </a>
         <a
-          href="mailto:abhisingh170801@gmail.com"
-          className="border border-gray-600 hover:border-blue-400/50 text-gray-300 hover:text-white px-6 py-3 rounded-full transition-all hover:bg-white/5"
+            href="/Abhinav_Singh_-_CV.pdf"
+            download
+            className="border border-blue-600/50 hover:border-blue-400 text-blue-400 hover:text-blue-300 px-6 py-3 rounded-full transition-all hover:bg-blue-950/30 flex items-center gap-2"
         >
-          Get in Touch
+            ⬇ Download CV
         </a>
-      </motion.div>
+        <a
+            href="mailto:abhisingh170801@gmail.com"
+            className="border border-gray-600 hover:border-blue-400/50 text-gray-300 hover:text-white px-6 py-3 rounded-full transition-all hover:bg-white/5"
+        >
+            Get in Touch
+        </a>
+        </motion.div>
 
       {/* Scroll hint */}
       <motion.div

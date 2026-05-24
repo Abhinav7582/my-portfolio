@@ -7,8 +7,9 @@ export const experiences = [
     period: "Dec 2025 – Present",
     location: "Bengaluru, India",
     stats: [
-      { label: "Media Spend Visibility", value: "~$50K" },
-      { label: "DSPs Automated", value: "4" },
+      { label: "Media Spend Optimization", value: "~$50K" },
+      { label: "Compute Savings", value: "~$10K" },
+      { label: "DSPs Automated", value: "Tier-I" },
     ],
     summary: "AdTech and product analytics focused on DSP discrepancy automation, data freshness monitoring, product feed migration, and stakeholder reporting.",
     highlights: [
@@ -30,7 +31,7 @@ export const experiences = [
     location: "Bengaluru, India",
     stats: [
       { label: "Project Conversion", value: "$45K" },
-      { label: "Dashboard Automation", value: "POC" },
+      { label: "Video Revenue Growth", value: "$182K" },
     ],
     summary: "Advanced ownership of analytics workstreams, Power BI metadata automation POC, and Microsoft-related analytics initiatives.",
     highlights: [

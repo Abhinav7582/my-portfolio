@@ -2,12 +2,13 @@ import { motion } from "framer-motion"
 
 const publications = [
   {
-    title: "Autonomous Driving Using Machine Learning and Computer Vision",
+    title: "Modelling Autonomous Driving and Obstacle Avoidance using Multi-Modal Fusion Transformer Framework",
     journal: "IJISRT — International Journal of Innovative Science and Research Technology",
-    year: "2023",
-    description: "Research paper exploring how machine learning and computer vision techniques can be applied to autonomous driving systems. Covers perception, decision-making, and intelligent automation in real-world driving scenarios.",
-    tags: ["Machine Learning", "Computer Vision", "Autonomous Driving", "AI"],
-    link: "#",
+    volume: "Volume 8 | Issue 2 | February 2023",
+    articleId: "IJISRT23FEB493",
+    description: "Defined a Multi-Modal Fusion Transformer for autonomous driving, integrating camera and LiDAR data to enhance trajectory prediction. Demonstrated via lane detection simulation and recognized by IJISRT and Karnataka State Council for its innovative traffic applications.",
+    tags: ["Multi-Modal Fusion Transformer", "Autonomous Driving", "Computer Vision", "LiDAR", "Deep Learning"],
+    link: "https://www.ijisrt.com/modelling-autonomous-driving-and-obstacle-avoidance-using-multimodal-fusion-transformer-framework",
   },
 ]
 
@@ -33,18 +34,19 @@ function Publications() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:border-blue-600/50 transition-all group"
+            className="bg-gray-900/80 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 hover:border-blue-600/50 transition-all group"
           >
             <div className="flex items-start justify-between gap-4 mb-3">
               <h3 className="text-white font-semibold text-xl leading-snug group-hover:text-blue-400 transition-colors">
                 {pub.title}
               </h3>
               <span className="text-blue-400 bg-blue-950/50 border border-blue-800/40 px-3 py-1 rounded-full text-sm shrink-0">
-                {pub.year}
+                2023
               </span>
             </div>
 
-            <p className="text-blue-400/70 text-sm mb-4">{pub.journal}</p>
+            <p className="text-blue-400/70 text-sm mb-1">{pub.journal}</p>
+            <p className="text-gray-600 text-xs mb-4">{pub.volume} · Article ID: {pub.articleId}</p>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">{pub.description}</p>
 
             <div className="flex items-center justify-between flex-wrap gap-4">
@@ -55,16 +57,14 @@ function Publications() {
                   </span>
                 ))}
               </div>
-              {pub.link !== "#" && (
-                <a
-                  href={pub.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1 transition-colors"
-                >
-                  Read Paper ↗
-                </a>
-              )}
+              <a
+                href={pub.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-sm px-4 py-2 rounded-full transition-colors"
+              >
+                Read Paper ↗
+              </a>
             </div>
           </motion.div>
         ))}
