@@ -1,4 +1,5 @@
 import { motion } from "framer-motion"
+import { TypeAnimation } from "react-type-animation"
 
 function Hero() {
   return (
@@ -26,31 +27,46 @@ function Hero() {
         </span>
       </motion.h1>
 
-      <motion.p
-        className="text-xl text-gray-400 max-w-2xl mb-4 leading-relaxed relative z-10"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
+      {/* Typing animation */}
+      <motion.div
+        className="text-xl text-gray-300 max-w-2xl mb-4 leading-relaxed relative z-10 h-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.6 }}
       >
-        Data Analyst with ~3 years of experience across AdTech, product analytics,
-        marketing analytics, and business intelligence.
-      </motion.p>
+        <TypeAnimation
+          sequence={[
+            "Data Analyst · AdTech & Product Analytics",
+            2000,
+            "Building automated DSP monitoring pipelines",
+            2000,
+            "Turning ambiguous problems into scalable solutions",
+            2000,
+            "ML · SQL · Python · Power BI · Sigma",
+            2000,
+          ]}
+          wrapper="span"
+          speed={50}
+          repeat={Infinity}
+          className="text-blue-300"
+        />
+      </motion.div>
 
       <motion.p
         className="text-gray-500 max-w-xl mb-10 leading-relaxed relative z-10"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.45 }}
+        transition={{ duration: 0.6, delay: 0.8 }}
       >
-        I turn ambiguous business problems into scalable analytics solutions —
-        from ML-powered recommendation engines to automated DSP monitoring pipelines.
+        ~3 years of experience across AdTech, product analytics,
+        marketing analytics, and business intelligence.
       </motion.p>
 
       <motion.div
         className="flex gap-4 flex-wrap justify-center relative z-10"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
+        transition={{ duration: 0.6, delay: 1.0 }}
       >
         <a
           href="#projects"
@@ -77,7 +93,7 @@ function Hero() {
         className="absolute bottom-8 text-gray-600 text-sm z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}

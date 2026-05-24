@@ -1,7 +1,40 @@
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState, useRef } from "react"
+import { motion, useMotionValue, useTransform } from "framer-motion"
 import { projects } from "../Data/projects"
 import Modal from "./Modal"
+
+function TiltCard({ children, onClick }) {
+  const ref = useRef(null)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const rotateX = useTransform(y, [-50, 50], [5, -5])
+  const rotateY = useTransform(x, [-50, 50], [-5, 5])
+
+  const handleMouseMove = (e) => {
+    const rect = ref.current.getBoundingClientRect()
+    x.set(e.clientX - rect.left - rect.width / 2)
+    y.set(e.clientY - rect.top - rect.height / 2)
+  }
+
+  const handleMouseLeave = () => {
+    x.set(0)
+    y.set(0)
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      style={{ rotateX, rotateY, transformPerspective: 800 }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+      whileHover={{ scale: 1.03 }}
+      className="bg-gray-900/80 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-blue-600/50 transition-colors group flex flex-col h-full"
+    >
+      {children}
+    </motion.div>
+  )
+}
 
 function Projects() {
   const [selected, setSelected] = useState(null)
@@ -27,50 +60,52 @@ function Projects() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
-            onClick={() => setSelected(project)}
-            className="bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-blue-600/50 hover:bg-gray-800/80 transition-all group flex flex-col"
+            className="h-full"
           >
-            {/* Company badge */}
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs text-blue-400 bg-blue-950/50 border border-blue-800/40 px-3 py-1 rounded-full">
-                {project.company}
-              </span>
-              <span className="text-gray-600 group-hover:text-gray-400 transition-colors text-lg">↗</span>
-            </div>
-
-            {/* Title */}
-            <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-blue-400 transition-colors">
-              {project.title}
-            </h3>
-
-            {/* One-liner */}
-            <p className="text-gray-400 text-sm leading-relaxed mb-4 flex-1">
-              {project.oneliner}
-            </p>
-
-            {/* Stats */}
-            <div className="flex gap-2 flex-wrap mb-4">
-              {project.stats.map((stat, j) => (
-                <div key={j} className="bg-gray-800 rounded-lg px-3 py-1.5">
-                  <span className="text-blue-400 font-bold text-sm">{stat.value}</span>
-                  <span className="text-gray-500 text-xs ml-1.5">{stat.label}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Tags */}
-            <div className="flex flex-wrap gap-2">
-              {project.tags.slice(0, 3).map((tag, j) => (
-                <span key={j} className="bg-gray-800 text-gray-400 text-xs px-2.5 py-1 rounded-full">
-                  {tag}
+            <TiltCard onClick={() => setSelected(project)}>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs text-blue-400 bg-blue-950/50 border border-blue-800/40 px-3 py-1 rounded-full">
+                  {project.company}
                 </span>
-              ))}
-              {project.tags.length > 3 && (
-                <span className="text-gray-600 text-xs px-2.5 py-1">
-                  +{project.tags.length - 3} more
-                </span>
-              )}
-            </div>
+                <motion.span
+                  className="text-gray-600 group-hover:text-blue-400 transition-colors text-lg"
+                  whileHover={{ rotate: 45, scale: 1.2 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  ↗
+                </motion.span>
+              </div>
+
+              <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-blue-400 transition-colors">
+                {project.title}
+              </h3>
+
+              <p className="text-gray-400 text-sm leading-relaxed mb-4 flex-1">
+                {project.oneliner}
+              </p>
+
+              <div className="flex gap-2 flex-wrap mb-4">
+                {project.stats.map((stat, j) => (
+                  <div key={j} className="bg-gray-800/80 rounded-lg px-3 py-1.5">
+                    <span className="text-blue-400 font-bold text-sm">{stat.value}</span>
+                    <span className="text-gray-500 text-xs ml-1.5">{stat.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {project.tags.slice(0, 3).map((tag, j) => (
+                  <span key={j} className="bg-gray-800 text-gray-400 text-xs px-2.5 py-1 rounded-full">
+                    {tag}
+                  </span>
+                ))}
+                {project.tags.length > 3 && (
+                  <span className="text-gray-600 text-xs px-2.5 py-1">
+                    +{project.tags.length - 3} more
+                  </span>
+                )}
+              </div>
+            </TiltCard>
           </motion.div>
         ))}
       </div>
