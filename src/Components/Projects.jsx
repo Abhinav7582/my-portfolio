@@ -29,7 +29,7 @@ function TiltCard({ children, onClick }) {
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
       whileHover={{ scale: 1.03 }}
-      className="bg-gray-900/80 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-blue-600/50 transition-colors group flex flex-col h-full"
+      className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-6 cursor-pointer hover:border-blue-500/40 hover:bg-white/[0.06] transition-all group flex flex-col h-full shadow-xl shadow-black/20"
     >
       {children}
     </motion.div>

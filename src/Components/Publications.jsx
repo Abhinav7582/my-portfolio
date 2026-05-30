@@ -34,7 +34,7 @@ function Publications() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="bg-gray-900/80 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 hover:border-blue-600/50 transition-all group"
+            className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-8 hover:border-blue-500/40 hover:bg-white/[0.06] transition-all group shadow-xl shadow-black/20"
           >
             <div className="flex items-start justify-between gap-4 mb-3">
               <h3 className="text-white font-semibold text-xl leading-snug group-hover:text-blue-400 transition-colors">

@@ -10,7 +10,7 @@ import './App.css'
 
 function App() {
   return (
-    <div className="bg-gray-950 text-white min-h-screen relative overflow-x-hidden">
+    <div className="bg-[#02030a] text-white min-h-screen relative overflow-x-hidden">
       <NeuralBackground />
       <div className="relative z-10">
         <Navbar />
