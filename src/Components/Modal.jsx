@@ -61,12 +61,33 @@ function Modal({ item, onClose }) {
             </div>
           )}
 
-          {/* Summary / Description */}
-          {(item.summary || item.description) && (
-            <p className="text-gray-300 mb-6 leading-relaxed">
-              {item.summary || item.description}
-            </p>
-          )}
+          {/* Summary */}
+        {(item.summary || item.description) && (
+          <p className="text-gray-300 mb-6 leading-relaxed">
+            {item.summary || item.description}
+          </p>
+        )}
+
+        {/* Detailed breakdown (bullet points) */}
+        {item.details && (
+          <div className="mb-6">
+            <h3 className="text-white font-semibold mb-3">What I Built</h3>
+            <ul className="space-y-2">
+              {item.details.map((d, i) => (
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.15 + i * 0.05 }}
+                  className="flex gap-3 text-gray-300 text-sm"
+                >
+                  <span className="text-blue-400 mt-0.5 shrink-0">▹</span>
+                  <span>{d}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+        )}
 
           {/* Highlights */}
           {item.highlights && (

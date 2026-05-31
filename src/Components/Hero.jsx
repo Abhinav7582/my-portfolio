@@ -34,7 +34,7 @@ function Hero() {
         {/* Photo */}
         <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-2 border-white/10 shadow-2xl shadow-blue-500/20">
           <img
-            src="/Abhi Photo.jpeg"
+            src="/profile.jpg"
             alt="Abhinav Singh"
             className="w-full h-full object-cover"
           />

@@ -1,0 +1,183 @@
+import { useEffect, useRef } from "react"
+
+function NeuralBackground() {
+  const canvasRef = useRef(null)
+  const scrollProgress = useRef(0)
+  const mouse = useRef({ x: 0.5, y: 0.5 })
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext("2d")
+    let animationId
+    let time = 0
+    let particles = []
+
+    const resize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+
+    const onScroll = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight
+      scrollProgress.current = scrollable > 0 ? window.scrollY / scrollable : 0
+    }
+
+    const onMouseMove = (e) => {
+      mouse.current.x = e.clientX / window.innerWidth
+      mouse.current.y = e.clientY / window.innerHeight
+    }
+
+    const createParticles = () => {
+      particles = []
+      const count = Math.floor((canvas.width * canvas.height) / 9000)
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 1.5 + 0.3,
+          speedX: (Math.random() - 0.5) * 0.3,
+          speedY: (Math.random() - 0.5) * 0.3,
+          opacity: Math.random() * 0.5 + 0.2,
+          pulse: Math.random() * Math.PI * 2,
+        })
+      }
+    }
+
+    const lerp = (a, b, t) => a + (b - a) * t
+
+    // Draw a flowing aurora band
+    const drawAurora = (yOffset, hueBase, amplitude, speed, alpha, p) => {
+      ctx.beginPath()
+      const points = []
+      for (let x = 0; x <= canvas.width; x += 12) {
+        const y =
+          yOffset +
+          Math.sin(x * 0.002 + time * speed) * amplitude +
+          Math.sin(x * 0.005 + time * speed * 1.7) * (amplitude * 0.4) +
+          Math.cos(x * 0.001 + time * speed * 0.5) * (amplitude * 0.6)
+        points.push({ x, y })
+      }
+
+      // Build a filled vertical gradient band
+      const grad = ctx.createLinearGradient(0, yOffset - amplitude * 2, 0, yOffset + amplitude * 2)
+      const hue = hueBase + p * 40
+      grad.addColorStop(0, `hsla(${hue}, 80%, 60%, 0)`)
+      grad.addColorStop(0.5, `hsla(${hue}, 85%, 62%, ${alpha})`)
+      grad.addColorStop(1, `hsla(${hue}, 80%, 60%, 0)`)
+
+      ctx.moveTo(0, points[0].y)
+      points.forEach((pt) => ctx.lineTo(pt.x, pt.y))
+      ctx.lineTo(canvas.width, canvas.height)
+      ctx.lineTo(0, canvas.height)
+      ctx.closePath()
+      ctx.fillStyle = grad
+      ctx.fill()
+    }
+
+    const draw = () => {
+      const p = scrollProgress.current
+      time += 1
+
+      // Deep base background
+      const bg = ctx.createLinearGradient(0, 0, 0, canvas.height)
+      bg.addColorStop(0, "#03040d")
+      bg.addColorStop(1, "#01020a")
+      ctx.fillStyle = bg
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      // Mouse parallax shifts aurora position slightly
+      const mx = (mouse.current.x - 0.5) * 60
+      const my = (mouse.current.y - 0.5) * 40
+
+      // Layered aurora bands — colors evolve with scroll
+      // Top → blue/teal, deeper → purple/magenta
+      drawAurora(canvas.height * 0.35 + my, lerp(190, 270, p), 70, 0.008, 0.10, p)
+      drawAurora(canvas.height * 0.5 + my * 0.7, lerp(210, 290, p), 90, 0.006, 0.12, p)
+      drawAurora(canvas.height * 0.65 + my * 0.4, lerp(230, 320, p), 60, 0.010, 0.09, p)
+
+      // Soft glowing orbs that follow mouse subtly
+      const drawOrb = (x, y, size, hue, a) => {
+        const g = ctx.createRadialGradient(x, y, 0, x, y, size)
+        g.addColorStop(0, `hsla(${hue}, 90%, 65%, ${a})`)
+        g.addColorStop(1, `hsla(${hue}, 90%, 65%, 0)`)
+        ctx.fillStyle = g
+        ctx.fillRect(x - size, y - size, size * 2, size * 2)
+      }
+      drawOrb(
+        canvas.width * 0.25 + mx,
+        canvas.height * 0.4 + Math.sin(time * 0.005) * 40,
+        300, lerp(200, 280, p), 0.06
+      )
+      drawOrb(
+        canvas.width * 0.75 - mx,
+        canvas.height * 0.6 + Math.cos(time * 0.004) * 40,
+        350, lerp(240, 310, p), 0.05
+      )
+
+      // Floating particles with connection lines (constellation effect)
+      particles.forEach((pt) => {
+        pt.x += pt.speedX
+        pt.y += pt.speedY
+        pt.pulse += 0.02
+        if (pt.x < 0) pt.x = canvas.width
+        if (pt.x > canvas.width) pt.x = 0
+        if (pt.y < 0) pt.y = canvas.height
+        if (pt.y > canvas.height) pt.y = 0
+
+        const op = pt.opacity + Math.sin(pt.pulse) * 0.2
+        ctx.beginPath()
+        ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255,255,255,${Math.max(0, op)})`
+        ctx.fill()
+      })
+
+      // Connection lines between nearby particles
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x
+          const dy = particles[i].y - particles[j].y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < 120) {
+            const hue = lerp(200, 290, p)
+            ctx.beginPath()
+            ctx.moveTo(particles[i].x, particles[i].y)
+            ctx.lineTo(particles[j].x, particles[j].y)
+            ctx.strokeStyle = `hsla(${hue}, 70%, 70%, ${(1 - dist / 120) * 0.15})`
+            ctx.lineWidth = 0.6
+            ctx.stroke()
+          }
+        }
+      }
+
+      animationId = requestAnimationFrame(draw)
+    }
+
+    resize()
+    createParticles()
+    onScroll()
+    draw()
+
+    window.addEventListener("resize", () => {
+      resize()
+      createParticles()
+    })
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("mousemove", onMouseMove, { passive: true })
+
+    return () => {
+      cancelAnimationFrame(animationId)
+      window.removeEventListener("resize", resize)
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("mousemove", onMouseMove)
+    }
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 z-0 pointer-events-none"
+    />
+  )
+}
+
+export default NeuralBackground
