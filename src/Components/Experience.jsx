@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { motion, useInView, useMotionValue, useTransform } from "framer-motion"
-import { experiences } from "../Data/experience"
+import { experience } from "../Data/experience"
 import Modal from "./Modal"
 
 // Animated counter hook
@@ -110,7 +110,7 @@ function Experience() {
         <div className="absolute left-6 top-0 bottom-0 w-px bg-gray-800 hidden md:block" />
 
         <div className="space-y-6">
-          {experiences.map((exp, i) => {
+          {experience.map((exp, i) => {
             const cardRef = useRef(null)
             const cardInView = useInView(cardRef, { once: true })
 

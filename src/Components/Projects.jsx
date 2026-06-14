@@ -40,7 +40,7 @@ function Projects() {
   const [selected, setSelected] = useState(null)
 
   return (
-    <section id="projects" className="py-24 px-6 max-w-6xl mx-auto">
+    <section id="projects" className="py-24 px-6 max-w-screen-2xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -52,7 +52,7 @@ function Projects() {
         <h2 className="text-4xl font-bold text-white">Projects</h2>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {projects.map((project, i) => (
           <motion.div
             key={project.id}
