@@ -109,7 +109,7 @@ return ( <section className="relative min-h-screen flex flex-col md:flex-row ite
       </a>
 
       <a
-        href="/Abhinav_Singh_-_CV.pdf"
+        href="/Abhinav_Singh_CV.pdf"
         download
         className="border border-blue-600/50 hover:border-blue-400 text-blue-400 hover:text-blue-300 px-5 py-2.5 rounded-full transition-all hover:bg-blue-950/30 flex items-center gap-2"
       >
