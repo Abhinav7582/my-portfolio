@@ -92,7 +92,7 @@ return ( <section className="relative min-h-screen flex flex-col md:flex-row ite
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.75 }}
     >
-      Data Analyst building AdTech analytics, BI automation, and production data workflows that improve visibility, reduce manual effort, and speed up decisions.
+      Data Analyst working across AdTech analytics and data engineering. I solve ambiguous problems end to end from building reliable pipelines to delivering insights that drive better decisions.
     </motion.p>
 
     <motion.div

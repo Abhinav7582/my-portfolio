@@ -62,16 +62,21 @@ function TiltCard({ children, onClick }) {
 
 // Stat badge with counter
 function StatBadge({ value, label, inView }) {
-  const isNumber = /[\d.]+/.test(value)
-  const numericPart = parseFloat(value.replace(/[^0-9.]/g, "")) || 0
-  const prefix = value.match(/^[^0-9]*/)?.[0] || ""
-  const suffix = value.match(/[^0-9.]+$/)?.[0] || ""
-  const count = useCounter(isNumber ? numericPart : 0, inView)
+  // Only animate SIMPLE single-number values (e.g. "+40%", "~$82K", "6,000+", "30%").
+  // Anything with a range/arrow/multiple numbers is shown verbatim.
+  const hasArrow = /[→\-·]/.test(value.replace(/^[~<>]/, "")) // arrows, en-dashes, middots
+  const numberMatches = value.match(/[\d.]+/g) || []
+  const isSimpleNumber = numberMatches.length === 1 && !hasArrow
+
+  const numericPart = isSimpleNumber ? parseFloat(numberMatches[0]) : 0
+  const prefix = isSimpleNumber ? (value.match(/^[^0-9]*/)?.[0] || "") : ""
+  const suffix = isSimpleNumber ? (value.match(/[^0-9.]+$/)?.[0] || "") : ""
+  const count = useCounter(numericPart, inView)
 
   return (
     <div className="bg-gray-800/80 rounded-lg px-3 py-1.5 text-center">
       <span className="text-blue-400 font-bold text-sm">
-        {isNumber ? `${prefix}${count}${suffix}` : value}
+        {isSimpleNumber ? `${prefix}${count}${suffix}` : value}
       </span>
       <span className="text-gray-500 text-xs ml-2">{label}</span>
     </div>

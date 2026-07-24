@@ -1,11 +1,12 @@
 import { motion } from "framer-motion"
 
 const skills = [
-{ category: "Languages", items: ["Python", "SQL", "PySpark", "HiveQL"] },
-{ category: "Analytics & BI", items: ["Power BI", "Tableau", "Qlik Sense", "Mixpanel"] },
-{ category: "Data & Engineering", items: ["Databricks", "Snowflake", "Microsoft Fabric", "Azure Data Factory", "Azure Cosmos DB"] },
-{ category: "Libraries", items: ["pandas", "numpy", "scikit-learn", "matplotlib", "openpyxl", "pbixray"] },
-{ category: "Domains", items: ["AdTech", "Product Analytics", "Marketing Analytics", "BI Automation", "Customer Analytics"] },
+  { category: "Languages & Processing", items: ["Python", "SQL", "PySpark", "Apache Spark", "Apache Hive"] },
+  { category: "Data Engineering & Platforms", items: ["Databricks", "Snowflake", "dbt", "Azure Data Factory", "Azure Synapse", "Azure Data Lake", "Azure Cosmos DB", "AWS S3", "Google BigQuery", "MySQL"] },
+  { category: "Data Science & ML", items: ["scikit-learn", "XGBoost", "Logistic Regression", "Classification", "Predictive & Statistical Modeling", "Feature Engineering", "NLP", "Customer Segmentation", "Quasi-Experimental Design"] },
+  { category: "Visualization & BI", items: ["Power BI", "Tableau", "Mixpanel", "Data Visualization"] },
+  { category: "Engineering Practices", items: ["ETL/ELT", "Data Modeling", "Workflow Automation", "EDA", "Git/Bitbucket"] },
+  { category: "AI Tooling & Domains", items: ["Cursor", "MCP", "AI-Assisted Analytics", "AdTech", "Product Analytics", "Marketing Analytics", "Customer Analytics"] },
 ]
 
 function About() {
@@ -28,35 +29,34 @@ className="text-center mb-16"
       className="space-y-4 text-gray-400 leading-relaxed"
     >
       <p>
-        I’m a Data Analyst with close to 3 years of experience across AdTech, product analytics,
-        marketing analytics, business intelligence, and analytics automation. My work sits at the
-        intersection of data, business problem solving, and stakeholder decision-making.
+        I'm a Data Analyst with 3+ years of experience across AdTech, product analytics, 
+        marketing analytics, business intelligence and data engineering. My work sits at the intersection 
+        of data, business problem solving, and stakeholder decision-making.
       </p>
 
       <p>
-        I started with OCR and machine learning at Tata Insights & Quants, then moved into
-        client-facing analytics at Affine Analytics, where I worked on recommendation systems,
-        customer churn, pricing analysis, Power BI governance, and Microsoft MSN AdTech revenue
-        diagnostics.
+        I started with OCR and machine learning at Tata Insights & Quants, then moved into client-facing analytics at Affine Analytics. 
+        There I built recommendation systems on TF-IDF product features, segment-level churn models in Snowflake benchmarking logistic regression 
+        against XGBoost, quasi-experimental pricing studies that recovered six figures in revenue, Power BI metadata governance across a 
+        6,000 dashboard estate and revenue diagnostics for the Microsoft MSN Bing Ads marketplace.
       </p>
 
       <p>
-        Currently at MiQ, I focus on AdTech product analytics and automation. I build Databricks
-        and PySpark workflows for DSP discrepancy monitoring, data stability checks, Sigma product
-        feed migration, SLA reporting, and agentic documentation workflows.
+        Currently at MiQ, I focus on AdTech product analytics and automation. I build Databricks and PySpark pipelines for 
+        DSP discrepancy monitoring, data stability checks, and API based ingestion across seven platforms, 
+        alongside the Sigma browsing feed migration and AI assisted documentation workflows using Cursor and MCP.
       </p>
 
       <p>
-        The consistent thread across my work is turning ambiguous, messy and manual processes
-        into structured analytical systems that improve visibility, reduce effort, and help teams
-        make faster decisions.
+        The consistent thread across my work is turning ambiguous, messy and manual processes 
+        into structured analytical systems that improve visibility, reduce effort, and help teams make faster decisions.
       </p>
 
       {/* Quick facts */}
       <div className="grid grid-cols-2 gap-4 pt-4">
         {[
-          { label: "Years of Experience", value: "~3" },
-          { label: "Projects Delivered", value: "15+" },
+          { label: "Years of Experience", value: "3+" },
+          { label: "Enterprise Clients", value: "4+" },
           { label: "Research Publication", value: "1" },
           { label: "Based In", value: "Bengaluru 🇮🇳" },
         ].map((fact, i) => (

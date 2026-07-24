@@ -3,7 +3,7 @@ import { motion, useMotionValue, useTransform } from "framer-motion"
 import { projects } from "../Data/projects"
 import Modal from "./Modal"
 
-function TiltCard({ children, onClick }) {
+function TiltCard({ children, onClick, featured }) {
   const ref = useRef(null)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
@@ -29,7 +29,11 @@ function TiltCard({ children, onClick }) {
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
       whileHover={{ scale: 1.03 }}
-      className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-6 cursor-pointer hover:border-blue-500/40 hover:bg-white/[0.06] transition-all group flex flex-col h-full shadow-xl shadow-black/20"
+      className={`bg-white/[0.03] backdrop-blur-md border rounded-2xl p-6 cursor-pointer hover:bg-white/[0.06] transition-all group flex flex-col h-full shadow-xl shadow-black/20 ${
+        featured
+          ? "border-blue-500/30 hover:border-blue-500/50"
+          : "border-white/10 hover:border-blue-500/40"
+      }`}
     >
       {children}
     </motion.div>
@@ -62,7 +66,7 @@ function Projects() {
             transition={{ duration: 0.5, delay: i * 0.1 }}
             className="h-full"
           >
-            <TiltCard onClick={() => setSelected(project)}>
+            <TiltCard onClick={() => setSelected(project)} featured={project.featured}>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs text-blue-400 bg-blue-950/50 border border-blue-800/40 px-3 py-1 rounded-full">
                   {project.company}
@@ -76,9 +80,18 @@ function Projects() {
                 </motion.span>
               </div>
 
-              <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-blue-400 transition-colors">
-                {project.title}
-              </h3>
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <h3 className="text-white font-semibold text-lg group-hover:text-blue-400 transition-colors">
+                  {project.title}
+                </h3>
+              </div>
+
+              {project.status && (
+                <span className="inline-flex items-center gap-1.5 self-start text-[11px] text-amber-300 bg-amber-950/40 border border-amber-700/40 px-2.5 py-0.5 rounded-full mb-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                  {project.status}
+                </span>
+              )}
 
               <p className="text-gray-400 text-sm leading-relaxed mb-4 flex-1">
                 {project.oneliner}
