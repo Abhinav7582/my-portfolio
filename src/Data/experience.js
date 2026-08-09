@@ -6,6 +6,19 @@ export const experience = [
     team: "Product Data Science · AdTech Analytics & Automation",
     period: "Dec 2025 – Present",
     location: "Bengaluru, India",
+    growth: {
+      stage: 5,
+      short: "Data Analyst 2",
+      // Explicit project links. Company name alone can't do this — three
+      // separate roles all sit at Affine Analytics. A test asserts every
+      // project is claimed by exactly one stage.
+      projectIds: [1, 2, 5, 6, 7],
+      year: "2026",
+      stageLabel: "Building the systems",
+      scope: "Production platform · 7 platforms automated",
+      ownership: 100,
+      leap: "From analysing the data to engineering the pipelines that produce it — owning business-critical systems in production.",
+    },
     stats: [
       { label: "Media Spend Opportunity", value: "~$82K" },
       { label: "Compute Savings", value: "~$11.5K" },
@@ -41,6 +54,16 @@ export const experience = [
     team: "AdTech & Monetisation Analytics · Microsoft MSN Bing Ads Marketplace",
     period: "Apr 2025 – Dec 2025",
     location: "Bengaluru, India",
+    growth: {
+      stage: 4,
+      short: "Senior Associate",
+      projectIds: [3, 4],
+      year: "2025",
+      stageLabel: "Revenue-critical scale",
+      scope: "Global markets · >$4M analysed",
+      ownership: 80,
+      leap: "Moved up to decisions with money attached, reconciling terabyte-scale logs across the US and seven international markets.",
+    },
     stats: [
       { label: "Revenue Movement Analysed", value: ">$4M" },
       { label: "Power BI Model", value: "4.8 GB → <1 GB" },
@@ -77,6 +100,16 @@ export const experience = [
       "Brand & Marketing Analytics · Shutterstock · Pond5 · PremiumBeat · DuPont",
     period: "Jan 2024 – Mar 2025",
     location: "Bengaluru, India",
+    growth: {
+      stage: 3,
+      short: "Associate",
+      projectIds: [8, 9, 11],
+      year: "2024",
+      stageLabel: "Owning the analysis",
+      scope: "Four brands · led independently",
+      ownership: 60,
+      leap: "Stopped executing briefs and started setting them — including turning a proof of concept into an approximately $45K governance engagement.",
+    },
     stats: [
       { label: "POC Converted", value: "~$45K Engagement" },
       { label: "Dashboard Estate", value: "6,000+" },
@@ -115,6 +148,16 @@ export const experience = [
     team: "Customer & Product Analytics · Blue Nile",
     period: "Jul 2023 – Dec 2023",
     location: "Bengaluru, India",
+    growth: {
+      stage: 2,
+      short: "Graduate Analyst",
+      projectIds: [10, 12],
+      year: "2023",
+      stageLabel: "First model in production",
+      scope: "One client · one product surface",
+      ownership: 35,
+      leap: "Went from supporting a pipeline to shipping a model, and beat collaborative filtering by choosing the approach that actually fit sparse data.",
+    },
     stats: [
       { label: "Recommendation Accuracy", value: "+40%" },
       { label: "Sales Conversion Lift", value: "+10%" },
@@ -150,6 +193,17 @@ export const experience = [
     team: "Data Science · OCR & Intelligent Document Processing",
     period: "Feb 2022 – Apr 2022",
     location: "Bengaluru, India",
+    growth: {
+      stage: 1,
+      short: "Data Science Intern",
+      // Internship predates the project write-ups — intentionally empty.
+      projectIds: [],
+      year: "2022",
+      stageLabel: "Learning the craft",
+      scope: "One OCR workflow",
+      ownership: 15,
+      leap: "First contact with applied ML, and the lesson that output quality lives in preprocessing and validation rather than in the model.",
+    },
     stats: [
       { label: "Domain", value: "OCR & Machine Learning" },
       { label: "Focus", value: "Document Extraction" },

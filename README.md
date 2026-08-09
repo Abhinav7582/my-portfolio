@@ -1,16 +1,44 @@
-# React + Vite
+# Portfolio — Abhinav Singh
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal portfolio showcasing three years of work across AdTech analytics,
+product analytics and data engineering.
 
-Currently, two official plugins are available:
+**Live:** _(add your Vercel URL here)_
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+React 19 · Vite · Tailwind CSS · framer-motion · Canvas 2D
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Single-page, fully static — no backend, no forms, no third-party scripts.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Scroll-driven cosmic background that moves through starfield → nebula →
+  gravitational collapse → big bang → galaxy → convergence
+- iOS-style liquid glass surfaces with specular edge highlights
+- Shared-element morph from project card into detail dialog
+- Fully keyboard navigable, with `prefers-reduced-motion` support throughout
+
+## Running locally
+
+```bash
+npm install
+npm run dev      # dev server
+npm run build    # production build to dist/
+npm run preview  # preview the production build
+npm run lint
+```
+
+## Deployment
+
+Deployed on Vercel from `main`. Security headers, CSP and caching rules are
+defined in [`vercel.json`](./vercel.json).
+
+## Notes
+
+See [`NOTES.md`](./NOTES.md) for architecture decisions, the reasoning behind
+the animation and glass systems, and the outstanding task list.
+
+---
+
+© Abhinav Singh

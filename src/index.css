@@ -2,17 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
 html {
-  scroll-behavior: smooth;
+  /* Anchor scrolling is handled in JS (see lib/scroll.js) so we control the
+     easing curve. Leaving CSS smooth-scroll on would fight that animation. */
+  scroll-behavior: auto;
 }
 
-/* Dot grid background */
 body {
   background-image: radial-gradient(circle, #ffffff08 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
-/* Custom scrollbar */
+/* Fixed navbar is ~72px tall; keep headings clear of it when jumping to an
+   anchor. Without this, every section title lands underneath the nav pill. */
+section[id] {
+  scroll-margin-top: 7rem;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -25,4 +35,187 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #3b82f6;
+}
+
+/* Dialog scroll area.
+   The page scrollbar sits flush against the viewport edge, which looked wrong
+   pinned to the inside of a rounded card. Transparent border plus
+   background-clip insets the thumb so it floats within the padding instead. */
+.modal-scroll {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+.modal-scroll::-webkit-scrollbar {
+  width: 11px;
+}
+.modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border: 3.5px solid transparent;
+  background-clip: content-box;
+  border-radius: 99px;
+}
+.modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+  background-clip: content-box;
+}
+
+/* Visible focus ring for keyboard users — the default was invisible on dark. */
+:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   LIQUID GLASS
+   --------------------------------------------------------------------------
+   Three stacked ingredients, which is what separates this from a plain
+   translucent box:
+     1. a tinted gradient fill, brighter at the top-left light source
+     2. a specular rim, drawn as a masked 1px ring so it catches light unevenly
+     3. an inner top highlight + outer depth shadow
+
+   There is deliberately NO backdrop-filter anywhere on this site any more —
+   see the note on `.glass` below. It originally had one, and every element
+   using it was forcing a per-frame backdrop re-sample above an animating
+   canvas. On a near-black starfield it bought almost nothing visually.
+
+   .glass      solid base + gradient + rim. Larger surfaces: navbar, buttons,
+               publication card.
+   .glass-lite same recipe, lighter fill and no base colour, so it reads as
+               translucent. Used on the card grid.
+
+   Neither belongs on the dialog panel — that is a plain solid surface, for
+   reasons documented at the top of Modal.jsx.
+   ========================================================================== */
+
+@layer components {
+  /* NOTE: `backdrop-filter` was removed from this class deliberately.
+     Every `.glass` element on this site floats above a canvas that repaints
+     at 60fps, so each one forced the compositor to re-sample a moving
+     backdrop every single frame. That same property — nested, on a scrolling
+     panel — was the root cause of the dialog tearing that took four rounds to
+     find. The navbar is `fixed`, so it was paying that cost permanently.
+
+     Over a dark starfield the visual loss is close to nil: the backdrop is
+     mostly near-black, so blurring it changes very little. The gradient, the
+     specular rim and the inset highlight are what actually read as glass.
+     A solid base colour gets the same look for free.
+
+     Do not add `backdrop-filter` back here. If a future surface genuinely
+     needs it, give it its own class, and never on something that scrolls or
+     sits inside another backdrop-filtered element. */
+  .glass {
+    position: relative;
+    isolation: isolate;
+    background-color: rgba(9, 13, 28, 0.82);
+    background-image: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.045) 40%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+      inset 0 -1px 0 0 rgba(255, 255, 255, 0.05),
+      0 10px 34px -10px rgba(0, 0, 0, 0.65);
+  }
+
+  .glass-lite {
+    position: relative;
+    isolation: isolate;
+    background-image: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.075) 0%,
+      rgba(255, 255, 255, 0.03) 45%,
+      rgba(255, 255, 255, 0.012) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+      0 10px 30px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Specular rim. Drawn as a masked ring rather than a border so the
+     highlight can vary around the edge the way real glass does. */
+  .glass::before,
+  .glass-lite::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.1) 28%,
+      rgba(255, 255, 255, 0) 52%,
+      rgba(255, 255, 255, 0.06) 74%,
+      rgba(255, 255, 255, 0.3) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Cool cast picked up from the background, so the glass feels lit by the
+     scene rather than pasted on top of it. */
+  .glass-tint::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      120% 100% at 15% 0%,
+      rgba(96, 165, 250, 0.11) 0%,
+      rgba(139, 92, 246, 0.045) 45%,
+      transparent 75%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .glass-hover {
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.35s ease;
+  }
+
+  .glass-hover:hover {
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.3),
+      0 18px 44px -12px rgba(37, 99, 235, 0.4),
+      0 0 0 1px rgba(96, 165, 250, 0.22);
+  }
+}
+
+/* Section seams were removed deliberately. A glow-plus-hairline divider on a
+   moving background reads as a pasted-on patch rather than a blend — the
+   background itself now carries continuity between sections. */
+
+/* ==========================================================================
+   REDUCED MOTION
+   The canvas already honoured this; the DOM animations did not.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

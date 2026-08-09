@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs on the same branch rather than queueing them.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` needs the lockfile to be in sync with package.json.
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # Pure-maths suites for the background and section anchoring. These
+      # cover the two failure modes that are invisible to lint and build:
+      # a NaN blanking the whole star field, and scenes anchoring to the
+      # wrong section. Both have shipped broken before.
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # Fails the build if a dependency has a known high-severity advisory.
+      # Paired with Dependabot, which opens the PR that fixes it.
+      - name: Audit
+        run: npm audit --audit-level=high
