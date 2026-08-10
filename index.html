@@ -4,11 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- TODO: replace this with your real domain once it's set, then update
-         public/robots.txt and public/sitemap.xml to match. Open Graph images
-         must be absolute URLs, so link previews stay broken until this is
-         pointing at the live host. -->
-    <link rel="canonical" href="https://abhinavsingh.vercel.app/" />
+    <!-- The canonical link is the source of truth for this site's origin.
+         Every absolute URL below, plus public/robots.txt and
+         public/sitemap.xml, must use the same host — a test enforces it.
+
+         Getting this wrong is not cosmetic: a canonical pointing at another
+         domain tells search engines the real version of this page lives
+         elsewhere, and Open Graph images must be absolute, so a wrong host
+         means every shared link renders a blank preview. Both happened. -->
+    <link rel="canonical" href="https://abhinavsinghdatanalyst.vercel.app/" />
 
     <title>Abhinav Singh — Data Analyst | AdTech &amp; Product Analytics</title>
     <meta
@@ -24,13 +28,13 @@
     <!-- Open Graph — controls how the link renders when shared -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Abhinav Singh" />
-    <meta property="og:url" content="https://abhinavsingh.vercel.app/" />
+    <meta property="og:url" content="https://abhinavsinghdatanalyst.vercel.app/" />
     <meta property="og:title" content="Abhinav Singh — Data Analyst | AdTech &amp; Product Analytics" />
     <meta
       property="og:description"
       content="3+ years across AdTech, product analytics and data engineering. Building pipelines, monitoring systems and analytics that drive decisions."
     />
-    <meta property="og:image" content="https://abhinavsingh.vercel.app/og-image.png" />
+    <meta property="og:image" content="https://abhinavsinghdatanalyst.vercel.app/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Abhinav Singh — Data Analyst, AdTech and Product Analytics" />
@@ -42,7 +46,7 @@
       name="twitter:description"
       content="3+ years across AdTech, product analytics and data engineering. Building pipelines, monitoring systems and analytics that drive decisions."
     />
-    <meta name="twitter:image" content="https://abhinavsingh.vercel.app/og-image.png" />
+    <meta name="twitter:image" content="https://abhinavsinghdatanalyst.vercel.app/og-image.png" />
 
     <!-- Structured data: helps search engines understand who this is about -->
     <script type="application/ld+json">
@@ -52,8 +56,8 @@
         "name": "Abhinav Singh",
         "jobTitle": "Data Analyst",
         "description": "Data Analyst working across AdTech analytics, product analytics and data engineering.",
-        "url": "https://abhinavsingh.vercel.app/",
-        "image": "https://abhinavsingh.vercel.app/profile.jpg",
+        "url": "https://abhinavsinghdatanalyst.vercel.app/",
+        "image": "https://abhinavsinghdatanalyst.vercel.app/profile.jpg",
         "sameAs": [
           "https://www.linkedin.com/in/abhinav-singh-534012213/",
           "https://github.com/Abhinav7582"

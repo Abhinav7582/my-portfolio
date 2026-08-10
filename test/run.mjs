@@ -16,7 +16,7 @@
  */
 
 import { execFileSync } from "node:child_process"
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { pathToFileURL } from "node:url"
@@ -412,6 +412,54 @@ globalThis.__CRASHED__ = renderToString(<PlainView crashed onExit={() => {}} />)
 }
 
 // ---------------------------------------------------------------------------
+// 6. Site metadata — one origin, and every referenced asset exists
+// ---------------------------------------------------------------------------
+/**
+ * This exists because it went wrong in production. index.html, robots.txt and
+ * sitemap.xml all pointed at a host that wasn't the deployed one, which meant
+ * every shared link rendered a blank preview (the OG image 404'd) and the
+ * canonical tag told search engines the real page lived on another domain.
+ *
+ * The canonical link is the source of truth. Everything else must agree with
+ * it, and every local path it references must actually exist.
+ */
+function testMetadata() {
+  const S = "metadata"
+  const html = readFileSync("index.html", "utf8")
+
+  const canonical = html.match(/<link rel="canonical" href="(https?:\/\/[^"]+)"/)?.[1]
+  if (!canonical) return fail(S, "index.html has no canonical link")
+  const origin = new URL(canonical).origin
+
+  const sources = {
+    "index.html": html,
+    "public/robots.txt": readFileSync("public/robots.txt", "utf8"),
+    "public/sitemap.xml": readFileSync("public/sitemap.xml", "utf8"),
+  }
+
+  // Only check URLs that look like this site's own; external links (LinkedIn,
+  // GitHub, the journal) are obviously meant to point elsewhere.
+  const OWN = /https?:\/\/[a-z0-9.-]*vercel\.app[^\s"'<)]*/gi
+  const referenced = new Set()
+  for (const [file, text] of Object.entries(sources)) {
+    for (const url of text.match(OWN) ?? []) {
+      if (new URL(url).origin !== origin)
+        return fail(S, `${file} references ${new URL(url).origin} but canonical is ${origin}`)
+      referenced.add(new URL(url).pathname)
+    }
+  }
+  pass(`all self-referencing URLs use one origin (${origin})`)
+
+  // A path in the metadata that doesn't exist is exactly how the OG preview
+  // broke — the tag was present and pointed at nothing.
+  const missing = [...referenced]
+    .filter((p) => p !== "/")
+    .filter((p) => !existsSync(join("public", p)))
+  if (missing.length) return fail(S, `metadata references missing file(s): ${missing.join(", ")}`)
+  pass(`all ${referenced.size} referenced paths exist in public/`)
+}
+
+// ---------------------------------------------------------------------------
 
 try {
   await testCosmos()
@@ -419,6 +467,7 @@ try {
   await testWiring()
   await testCrossFilter()
   await testRender()
+  testMetadata()
 } catch (err) {
   failures++
   results.push(`  ✗ threw: ${err.message}`)

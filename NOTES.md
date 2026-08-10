@@ -406,7 +406,6 @@ Enable 2FA, secret scanning and branch protection on `main`.
 
 | | Item | Why |
 |---|---|---|
-| High | Replace `abhinavsingh.vercel.app` placeholder in `index.html`, `robots.txt`, `sitemap.xml` | Open Graph images need absolute URLs — link previews stay broken until this points at the real host |
 | High | `public/profile.jpg` is 605KB for a 256px avatar | Biggest single payload on the page. Re-encode to WebP at ~2× display size, likely under 40KB |
 | Med | JS bundle is 408KB raw / 129KB gzipped | Mostly framer-motion. Fine for now; if it grows, code-split the modal |
 | Med | Tune background presence to taste | `INTENSITY_BY_SECTION` in `lib/sections.js`, and the alpha caps in `AmbientField.jsx` |
@@ -450,6 +449,28 @@ direction. That's correct and expected; the fix is *not* to reinstall. Verify
 builds locally on the Mac. For a syntax and import check without touching
 `node_modules`, `npx esbuild src/main.jsx --bundle --loader:.css=empty
 --jsx=automatic` works from anywhere.
+
+## 9g. Wrong domain in metadata (V2.9) — shipped broken, then fixed
+
+The site deployed to `abhinavsinghdatanalyst.vercel.app`, but `index.html`,
+`robots.txt` and `sitemap.xml` all pointed at `abhinavsingh.vercel.app`. Two
+real consequences, both live in production for a short while:
+
+- **Every shared link rendered a blank preview**, because the Open Graph image
+  URL 404'd on a host that isn't this site.
+- **The canonical tag pointed search engines at a different domain**, which is
+  the more serious one — it tells Google the real version of the page lives
+  somewhere else.
+
+Worth noting how it slipped through: I asked whether the placeholder was
+correct and was told yes, so I stopped checking. Neither the build, the tests
+nor a local dev run can catch it — the URLs are only wrong relative to where
+the site actually ends up.
+
+**The canonical link in `index.html` is now the single source of truth.** A
+test asserts every self-referencing URL across all three files uses that same
+origin, and that every path they reference exists in `public/`. Change the
+domain in one place and the test tells you what else disagrees.
 
 ## 9f. Production safety net (V2.8)
 
