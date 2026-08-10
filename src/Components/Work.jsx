@@ -22,6 +22,19 @@ import { applyFilter } from "../lib/crossFilter"
 
 const CATEGORIES = ["All", ...new Set(projects.map((p) => p.category))]
 
+/**
+ * True only for devices with a real pointer.
+ *
+ * The hover-dim effect (hovering one card fades the other eleven) is a nice
+ * desktop touch and a bug on a phone: touch browsers fire `mouseenter` on tap
+ * and only fire `mouseleave` when you tap something else, so after opening and
+ * closing a card the rest of the grid stays at 40% opacity with no way to
+ * clear it. Gating on `(hover: hover)` means touch devices never enter that
+ * state at all.
+ */
+const CAN_HOVER =
+  typeof window !== "undefined" && window.matchMedia?.("(hover: hover)").matches
+
 function ProjectCard({ project, index, onOpen, dimmed, onHover }) {
   const ref = useRef(null)
   // The dialog morphs from this rect. Captured on click rather than tracked
@@ -50,13 +63,13 @@ function ProjectCard({ project, index, onOpen, dimmed, onHover }) {
     <motion.div
       ref={ref}
       variants={cardIn}
-      whileHover={{ y: -4 }}
+      whileHover={CAN_HOVER ? { y: -4 } : undefined}
       style={{ rotateX, rotateY, transformPerspective: 900 }}
       onMouseMove={handleMove}
-      onMouseEnter={() => onHover(project.id)}
+      onMouseEnter={() => CAN_HOVER && onHover(project.id)}
       onMouseLeave={() => {
         reset()
-        onHover(null)
+        if (CAN_HOVER) onHover(null)
       }}
       onClick={() => {
         reset()
