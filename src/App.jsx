@@ -60,9 +60,19 @@ function App() {
   return (
     // reducedMotion="user" makes every framer animation honour the OS setting.
     <MotionConfig reducedMotion="user">
-      <div className="bg-[#02030a] text-white min-h-screen relative overflow-x-hidden">
+      <div className="bg-[#02030a] text-white min-h-screen min-h-[100svh] relative overflow-x-hidden">
         <CosmicField />
         <ScrollProgress />
+        {/* Skip link — the first thing a keyboard or screen-reader user hits.
+            Visually hidden until focused. Without it they have to tab through
+            the entire navbar on every visit to reach the content. */}
+        <a
+          href="#growth"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-full focus:bg-blue-600 focus:px-5 focus:py-3 focus:text-white focus:shadow-xl"
+        >
+          Skip to content
+        </a>
+
         <div className="relative z-10">
           <Navbar onPlainView={togglePlain} />
           <main>

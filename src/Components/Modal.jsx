@@ -174,7 +174,7 @@ function Modal({ item, onClose, originRect, title, children }) {
         // No `will-change` either: on an element that already has its own
         // layer from the transform, it only changes layering in ways that
         // reintroduced flashing.
-        className="bg-[#0d1220] border border-white/12 shadow-2xl shadow-black/60 rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden outline-none flex flex-col"
+        className="bg-[#0d1220] border border-white/12 shadow-2xl shadow-black/60 rounded-2xl max-w-2xl w-full max-h-[85vh] max-h-[85dvh] overflow-hidden outline-none flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Scroll area: a plain div on purpose. Nothing framer-managed lives
@@ -191,7 +191,7 @@ function Modal({ item, onClose, originRect, title, children }) {
                 {item.company} {item.team ? `· ${item.team}` : ""}
               </p>
               )}
-              {item?.period && <p className="text-gray-500 text-sm mt-1">{item.period}</p>}
+              {item?.period && <p className="text-gray-400 text-sm mt-1">{item.period}</p>}
               {item?.status && (
                 <span className="inline-flex items-center gap-1.5 text-xs text-amber-300 bg-amber-950/40 border border-amber-700/40 px-2.5 py-0.5 rounded-full mt-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />

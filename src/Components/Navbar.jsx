@@ -162,7 +162,7 @@ function Navbar({ onPlainView }) {
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
-            className="relative z-[2] w-6 h-6 flex flex-col justify-center items-center gap-1.5"
+            className="relative z-[2] -mr-2 w-11 h-11 flex flex-col justify-center items-center gap-1.5"
           >
             <motion.span
               animate={menuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}

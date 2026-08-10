@@ -16,7 +16,15 @@
  */
 
 import { execFileSync } from "node:child_process"
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { pathToFileURL } from "node:url"
@@ -362,6 +370,7 @@ globalThis.__CRASHED__ = renderToString(<PlainView crashed onExit={() => {}} />)
 
   await import(pathToFileURL(out).href)
   const app = globalThis.__APP__
+  globalThis.__A11Y_HTML__ = app
   const plain = globalThis.__PLAIN__
   const crashed = globalThis.__CRASHED__
 
@@ -460,6 +469,84 @@ function testMetadata() {
 }
 
 // ---------------------------------------------------------------------------
+// 7. Accessibility
+// ---------------------------------------------------------------------------
+/**
+ * Measured, not asserted by vibes. The contrast figures below come from the
+ * WCAG relative-luminance formula against this site's actual surfaces.
+ *
+ * The finding that prompted this: Tailwind's gray-500 measures 3.29:1 on a
+ * nebula-lit panel, gray-600 2.11:1 and gray-700 1.54:1 — all well under the
+ * 4.5:1 AA threshold, and all were in use for real text. `text-muted`
+ * (#8b95a8, 5.28:1) is the quietest neutral that passes.
+ */
+function testA11y() {
+  const S = "a11y"
+
+  const srgb = (c) => (c / 255 <= 0.04045 ? c / 255 / 12.92 : ((c / 255 + 0.055) / 1.055) ** 2.4)
+  const lum = (hex) => {
+    const h = hex.replace("#", "")
+    const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16))
+    return 0.2126 * srgb(r) + 0.7152 * srgb(g) + 0.0722 * srgb(b)
+  }
+  const ratio = (a, b) => {
+    const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p)
+    return (x + 0.05) / (y + 0.05)
+  }
+
+  // Worst realistic surface: a nebula-lit panel, brighter than the page base.
+  const SURFACE = "#172041"
+  const PALETTE = {
+    "text-gray-300": "#d1d5db",
+    "text-gray-400": "#9ca3af",
+    "text-muted": "#8b95a8",
+    "text-blue-400": "#60a5fa",
+    "text-blue-300": "#93c5fd",
+  }
+  for (const [name, hex] of Object.entries(PALETTE)) {
+    const r = ratio(hex, SURFACE)
+    if (r < 4.5) return fail(S, `${name} (${hex}) is ${r.toFixed(2)}:1 on ${SURFACE}, below AA 4.5:1`)
+  }
+  pass(`all ${Object.keys(PALETTE).length} text colours pass AA on the worst surface`)
+
+  // Guard against reintroducing the greys that failed. This is the only check
+  // that would stop someone typing `text-gray-500` out of habit.
+  const banned = []
+  for (const file of readdirSync("src/Components")) {
+    if (!file.endsWith(".jsx")) continue
+    const src = readFileSync(join("src/Components", file), "utf8")
+    for (const m of src.match(/text-gray-(500|600|700|800|900)/g) ?? []) banned.push(`${file}: ${m}`)
+  }
+  if (banned.length)
+    return fail(S, `sub-AA greys reintroduced — use text-muted instead: ${banned.join(", ")}`)
+  pass("no sub-AA grey text classes in components")
+
+  // Structure, from the rendered page.
+  const html = globalThis.__A11Y_HTML__
+  if (!html) return fail(S, "render suite must run first")
+
+  if (!/href="#growth"[^>]*sr-only|sr-only[^>]*href="#growth"/.test(html) && !/Skip to content/.test(html))
+    return fail(S, "no skip link — keyboard users must tab the whole navbar to reach content")
+  const h1s = html.match(/<h1[ >]/g) ?? []
+  if (h1s.length !== 1) return fail(S, `page has ${h1s.length} <h1> elements, expected exactly 1`)
+  if (!/<main[ >]/.test(html)) return fail(S, "no <main> landmark")
+
+  const levels = [...html.matchAll(/<h([1-6])[ >]/g)].map((m) => +m[1])
+  for (let i = 1; i < levels.length; i++) {
+    if (levels[i] > levels[i - 1] + 1)
+      return fail(S, `heading level jumps h${levels[i - 1]} → h${levels[i]}`)
+  }
+  pass(`skip link, one <h1>, <main>, and ${levels.length} headings in order`)
+
+  // An unnamed control is invisible to a screen reader.
+  const unnamed = [...html.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/g)].filter(
+    ([, attrs, inner]) => !inner.replace(/<[^>]*>/g, "").trim() && !/aria-label=/.test(attrs)
+  )
+  if (unnamed.length) return fail(S, `${unnamed.length} button(s) have no accessible name`)
+  pass("every button has an accessible name")
+}
+
+// ---------------------------------------------------------------------------
 
 try {
   await testCosmos()
@@ -468,6 +555,7 @@ try {
   await testCrossFilter()
   await testRender()
   testMetadata()
+  testA11y()
 } catch (err) {
   failures++
   results.push(`  ✗ threw: ${err.message}`)

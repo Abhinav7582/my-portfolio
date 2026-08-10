@@ -450,6 +450,56 @@ builds locally on the Mac. For a syntax and import check without touching
 `node_modules`, `npx esbuild src/main.jsx --bundle --loader:.css=empty
 --jsx=automatic` works from anywhere.
 
+## 9h. Accessibility and mobile (V3.0)
+
+### Contrast — six real failures, measured not guessed
+
+Ratios computed with the WCAG relative-luminance formula against this site's
+actual surfaces (`#0d1220` dialog, `#172041` nebula-lit panel):
+
+| Class | Ratio (worst surface) | Verdict |
+|---|---|---|
+| `text-gray-400` | 6.27:1 | passes |
+| `text-muted` (#8b95a8) | 5.28:1 | passes |
+| `text-gray-500` | 3.29:1 | **fails AA** |
+| `text-gray-600` | 2.11:1 | **fails AA** |
+| `text-gray-700` | 1.54:1 | **fails badly** |
+
+All three failing greys were in use for real text — stat labels, company
+lines, the footer colophon. Replaced: `gray-500 → gray-400`,
+`gray-600/700 → text-muted`.
+
+**`text-muted` is the floor.** `#8b95a8` is the quietest neutral that still
+clears 4.5:1 here; anything darker fails. A test computes the ratios and also
+greps the components, so typing `text-gray-500` out of habit fails CI.
+
+### Structure
+
+Added a **skip link** — it was the one missing landmark. Without it a keyboard
+user tabs the entire navbar on every visit before reaching content.
+
+Already fine and now asserted: one `<h1>`, `<main>` and `<nav>` present, 18
+headings with no skipped levels, and every one of the 49 buttons has an
+accessible name.
+
+### Tap targets — know which standard you're citing
+
+The 44×44px figure everyone quotes is Apple's HIG and **WCAG AAA** (2.5.5).
+The **AA** requirement is WCAG 2.2 SC 2.5.8: **24×24px**. All controls here
+already passed AA. Several were still uncomfortable on a phone, so: the
+hamburger went from exactly 24px to 44px, and the filter and toolkit chips get
+extra vertical padding on small screens only, leaving desktop density alone.
+
+### The mobile bug that bites everyone: `100vh`
+
+iOS Safari's `100vh` includes the area behind the address bar, so a
+`min-h-screen` hero is taller than the visible viewport and its bottom content
+sits off-screen until the bar collapses. Hero, App, PlainView now also set
+`min-h-[100svh]` (smallest viewport height) and the dialog `max-h-[85dvh]`.
+Both are declared *after* the `vh` version so older browsers keep the fallback.
+
+Smallest text (`10px`) bumped to `11px` below the `sm` breakpoint.
+
 ## 9g. Wrong domain in metadata (V2.9) — shipped broken, then fixed
 
 The site deployed to `abhinavsinghdatanalyst.vercel.app`, but `index.html`,

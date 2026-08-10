@@ -21,7 +21,7 @@ const stages = [...experience].sort((a, b) => (b.growth?.stage ?? 0) - (a.growth
 
 function PlainView({ onExit, crashed = false }) {
   return (
-    <div className="min-h-screen bg-[#0b0d14] text-gray-200 print:bg-white print:text-black">
+    <div className="min-h-screen min-h-[100svh] bg-[#0b0d14] text-gray-200 print:bg-white print:text-black">
       <div className="max-w-3xl mx-auto px-6 py-10">
         <div className="flex items-start justify-between gap-4 mb-8 pb-6 border-b border-white/15">
           <div>
@@ -93,7 +93,7 @@ function PlainView({ onExit, crashed = false }) {
               <h3 className="font-semibold text-white print:text-black">
                 {e.role} — {e.company}
               </h3>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-gray-400 mt-0.5">
                 {e.team} · {e.period} · {e.location}
               </p>
               <p className="text-sm leading-relaxed mt-2 text-gray-300">{e.summary}</p>
@@ -106,7 +106,7 @@ function PlainView({ onExit, crashed = false }) {
                   <li key={i}>{h}</li>
                 ))}
               </ul>
-              <p className="text-xs text-gray-500 mt-2">{e.tags.join(", ")}</p>
+              <p className="text-xs text-gray-400 mt-2">{e.tags.join(", ")}</p>
             </article>
           ))}
         </div>
@@ -118,13 +118,13 @@ function PlainView({ onExit, crashed = false }) {
           {projects.map((p) => (
             <article key={p.id}>
               <h3 className="font-semibold text-white print:text-black">
-                {p.title} <span className="font-normal text-gray-500">— {p.company}</span>
+                {p.title} <span className="font-normal text-gray-400">— {p.company}</span>
               </h3>
               <p className="text-sm leading-relaxed mt-1 text-gray-300">{p.oneliner}</p>
               <p className="text-sm mt-1 text-gray-400">
                 {p.stats.map((s) => `${s.value} ${s.label}`).join(" · ")}
               </p>
-              <p className="text-xs text-gray-500 mt-1">{p.tags.join(", ")}</p>
+              <p className="text-xs text-gray-400 mt-1">{p.tags.join(", ")}</p>
             </article>
           ))}
         </div>
@@ -143,7 +143,7 @@ function PlainView({ onExit, crashed = false }) {
           — IJISRT, Volume 8, Issue 2, February 2023.
         </p>
 
-        <p className="text-xs text-gray-600 border-t border-white/15 pt-6">
+        <p className="text-xs text-muted border-t border-white/15 pt-6">
           Plain view · no animation, no interaction required.
         </p>
       </div>

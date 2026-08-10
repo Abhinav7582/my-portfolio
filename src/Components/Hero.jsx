@@ -24,7 +24,7 @@ function Hero() {
   return (
     <section
       id="hero"
-      className={`relative min-h-screen flex flex-col justify-center px-6 md:px-10 pt-28 pb-16 ${CONTAINER} mx-auto`}
+      className={`relative min-h-screen min-h-[100svh] flex flex-col justify-center px-6 md:px-10 pt-28 pb-16 ${CONTAINER} mx-auto`}
     >
       <div className="grid md:grid-cols-[auto_minmax(0,1fr)] items-center gap-10 md:gap-16 text-center md:text-left max-w-6xl mx-auto w-full">
         {/* Photo with orbit rings */}
@@ -171,7 +171,7 @@ function Hero() {
                 <p className="text-2xl md:text-3xl font-bold text-blue-400 tracking-tight">
                   {m.value}
                 </p>
-                <p className="text-gray-500 text-xs mt-1 leading-snug">{m.label}</p>
+                <p className="text-gray-400 text-xs mt-1 leading-snug">{m.label}</p>
               </div>
             ))}
           </motion.div>
@@ -182,7 +182,7 @@ function Hero() {
         type="button"
         onClick={() => scrollToId("growth")}
         aria-label="Scroll to Growth section"
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-gray-600 hover:text-blue-400 text-sm transition-colors hidden md:block"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-muted hover:text-blue-400 text-sm transition-colors hidden md:block"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}

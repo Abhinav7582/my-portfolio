@@ -42,7 +42,7 @@ function Contact() {
               </span>
             </div>
             <p className="text-blue-400/70 text-xs">{publication.journal}</p>
-            <p className="text-gray-600 text-[11px] mt-0.5">{publication.meta}</p>
+            <p className="text-muted text-[11px] mt-0.5">{publication.meta}</p>
             <p className="text-gray-400 text-sm leading-relaxed mt-3">{publication.blurb}</p>
             <p className="text-blue-400 text-sm mt-4">Read the paper ↗</p>
           </div>
@@ -95,10 +95,10 @@ function Contact() {
 
         <motion.div
           variants={fadeUp}
-          className="border-t border-white/[0.08] mt-16 pt-8 text-gray-600 text-sm"
+          className="border-t border-white/[0.08] mt-16 pt-8 text-muted text-sm"
         >
           <p>Designed &amp; built by Abhinav Singh · {new Date().getFullYear()}</p>
-          <p className="text-gray-700 text-xs mt-2">
+          <p className="text-muted text-xs mt-2">
             React &amp; Vite, Tailwind, framer-motion. Background is hand-written Canvas 2D.
           </p>
         </motion.div>

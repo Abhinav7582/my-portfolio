@@ -77,10 +77,10 @@ function ProjectCard({ project, index, onOpen, dimmed, onHover }) {
     >
       <div className="relative z-[2] flex flex-col h-full">
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-[10px] text-gray-600 font-mono tabular-nums">
+          <span className="text-[11px] sm:text-[10px] text-muted font-mono tabular-nums">
             {String(index + 1).padStart(2, "0")}
           </span>
-          <span className="text-[10px] text-blue-300 bg-blue-500/10 border border-blue-400/25 px-2 py-0.5 rounded-full truncate">
+          <span className="text-[11px] sm:text-[10px] text-blue-300 bg-blue-500/10 border border-blue-400/25 px-2 py-0.5 rounded-full truncate">
             {project.category}
           </span>
         </div>
@@ -89,7 +89,7 @@ function ProjectCard({ project, index, onOpen, dimmed, onHover }) {
         <p className="text-[11px] text-blue-400/80 mt-1">{project.company}</p>
 
         {project.status && (
-          <span className="inline-flex items-center gap-1.5 self-start text-[10px] text-amber-300 bg-amber-950/40 border border-amber-700/40 px-2 py-0.5 rounded-full mt-2">
+          <span className="inline-flex items-center gap-1.5 self-start text-[11px] sm:text-[10px] text-amber-300 bg-amber-950/40 border border-amber-700/40 px-2 py-0.5 rounded-full mt-2">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
             {project.status}
           </span>
@@ -104,7 +104,7 @@ function ProjectCard({ project, index, onOpen, dimmed, onHover }) {
               className="bg-white/[0.05] border border-white/[0.07] rounded-lg px-2.5 py-1.5"
             >
               <span className="text-blue-400 font-semibold text-xs">{s.value}</span>
-              <span className="text-gray-500 text-[10px] ml-1.5">{s.label}</span>
+              <span className="text-gray-400 text-[11px] sm:text-[10px] ml-1.5">{s.label}</span>
             </div>
           ))}
         </div>
@@ -113,13 +113,13 @@ function ProjectCard({ project, index, onOpen, dimmed, onHover }) {
           {project.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="text-[10px] text-gray-500 bg-white/[0.04] border border-white/[0.06] px-2 py-0.5 rounded-full"
+              className="text-[11px] sm:text-[10px] text-gray-400 bg-white/[0.04] border border-white/[0.06] px-2 py-0.5 rounded-full"
             >
               {tag}
             </span>
           ))}
           {project.tags.length > 3 && (
-            <span className="text-[10px] text-gray-600 px-1 py-0.5">
+            <span className="text-[11px] sm:text-[10px] text-muted px-1 py-0.5">
               +{project.tags.length - 3}
             </span>
           )}
@@ -189,7 +189,7 @@ function Work({ crossFilter, onClearCrossFilter }) {
             <button
               type="button"
               onClick={onClearCrossFilter}
-              className="ml-auto text-xs text-gray-300 hover:text-white border border-white/15 hover:border-white/35 rounded-full px-3 py-1 transition-colors"
+              className="ml-auto text-xs text-gray-300 hover:text-white border border-white/15 hover:border-white/35 rounded-full px-4 py-2 transition-colors"
             >
               Clear ✕
             </button>
@@ -215,20 +215,20 @@ function Work({ crossFilter, onClearCrossFilter }) {
               type="button"
               onClick={() => chooseCategory(c)}
               aria-pressed={active}
-              className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+              className={`text-xs px-3.5 py-2.5 sm:py-1.5 rounded-full border transition-all ${
                 active
                   ? "bg-blue-500/25 border-blue-400/50 text-white"
                   : "bg-white/[0.03] border-white/[0.09] text-gray-400 hover:text-white hover:border-blue-400/40"
               }`}
             >
               {c}
-              <span className={`ml-1.5 tabular-nums ${active ? "text-blue-200" : "text-gray-600"}`}>
+              <span className={`ml-1.5 tabular-nums ${active ? "text-blue-200" : "text-muted"}`}>
                 {n}
               </span>
             </button>
           )
         })}
-        <span className="text-xs text-gray-500 tabular-nums ml-auto">
+        <span className="text-xs text-gray-400 tabular-nums ml-auto">
           Showing {shown.length} of {projects.length}
         </span>
       </motion.div>
@@ -242,7 +242,7 @@ function Work({ crossFilter, onClearCrossFilter }) {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4"
       >
         {shown.length === 0 && (
-          <p className="text-gray-500 text-sm col-span-full py-8">
+          <p className="text-gray-400 text-sm col-span-full py-8">
             No projects match this filter.
           </p>
         )}

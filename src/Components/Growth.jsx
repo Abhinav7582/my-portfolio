@@ -178,14 +178,14 @@ function Growth({ onShowProjects }) {
                       : "border-transparent hover:bg-white/[0.04]"
                   }`}
                 >
-                  <span className="text-[11px] text-gray-500">{s.growth.year}</span>
+                  <span className="text-[11px] text-gray-400">{s.growth.year}</span>
                   <span className="min-w-0">
                     <span className="block text-sm text-gray-100 truncate">{s.growth.short}</span>
-                    <span className="block text-[11px] text-gray-500 truncate">{s.company}</span>
+                    <span className="block text-[11px] text-gray-400 truncate">{s.company}</span>
                   </span>
                   <span
-                    className={`text-[10px] transition-opacity ${
-                      active ? "text-blue-300 opacity-100" : "text-gray-600 opacity-0"
+                    className={`text-[11px] sm:text-[10px] transition-opacity ${
+                      active ? "text-blue-300 opacity-100" : "text-muted opacity-0"
                     }`}
                   >
                     selected
@@ -211,12 +211,12 @@ function Growth({ onShowProjects }) {
               <div className="relative z-[2]">
                 <h3 className="text-white font-semibold text-lg">{exp.role}</h3>
                 <p className="text-blue-400 text-sm mt-0.5">{exp.company}</p>
-                <p className="text-gray-500 text-xs mt-1">
+                <p className="text-gray-400 text-xs mt-1">
                   {exp.team} · {exp.period}
                 </p>
 
                 <div className="my-5 pl-3.5 border-l-2 border-blue-500/40">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-blue-400/70 mb-1.5">
+                  <p className="text-[11px] sm:text-[10px] uppercase tracking-[0.16em] text-blue-400/70 mb-1.5">
                     The step up
                   </p>
                   <p className="text-gray-300 text-sm leading-relaxed">{g.leap}</p>
@@ -229,7 +229,7 @@ function Growth({ onShowProjects }) {
                       className="bg-white/[0.05] border border-white/[0.08] rounded-lg px-2.5 py-1.5 text-xs"
                     >
                       <span className="text-blue-400 font-semibold">{s.value}</span>
-                      <span className="text-gray-500 ml-1.5">{s.label}</span>
+                      <span className="text-gray-400 ml-1.5">{s.label}</span>
                     </span>
                   ))}
                 </div>
@@ -279,7 +279,7 @@ function Growth({ onShowProjects }) {
         className="mt-12 pt-8 border-t border-white/[0.08]"
       >
         <div className="flex items-baseline justify-between gap-4 flex-wrap mb-4">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-gray-500">Toolkit</p>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-gray-400">Toolkit</p>
           <p className="text-xs text-blue-400/80">
             {exp.tags.length} of {allSkills.length} in use — {g.year}
           </p>
@@ -298,10 +298,10 @@ function Growth({ onShowProjects }) {
                 disabled={n === 0}
                 onClick={() => n > 0 && onShowProjects(tagFilter(skill))}
                 title={n > 0 ? `Show ${n} project${n > 1 ? "s" : ""} using ${skill}` : undefined}
-                className={`text-xs px-3 py-1.5 rounded-full border transition-all duration-300 ${
+                className={`text-xs px-3.5 py-2 sm:py-1.5 rounded-full border transition-all duration-300 ${
                   on
                     ? "bg-blue-500/25 border-blue-400/50 text-white"
-                    : "bg-white/[0.02] border-white/[0.07] text-gray-600"
+                    : "bg-white/[0.02] border-white/[0.07] text-muted"
                 } ${n > 0 ? "hover:border-blue-400/70 hover:text-white cursor-pointer" : "cursor-default"}`}
               >
                 {skill}
