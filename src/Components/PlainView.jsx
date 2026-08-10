@@ -19,7 +19,7 @@ import { projects } from "../Data/projects"
 
 const stages = [...experience].sort((a, b) => (b.growth?.stage ?? 0) - (a.growth?.stage ?? 0))
 
-function PlainView({ onExit }) {
+function PlainView({ onExit, crashed = false }) {
   return (
     <div className="min-h-screen bg-[#0b0d14] text-gray-200 print:bg-white print:text-black">
       <div className="max-w-3xl mx-auto px-6 py-10">
@@ -62,9 +62,16 @@ function PlainView({ onExit }) {
             onClick={onExit}
             className="text-xs border border-white/25 rounded-full px-3 py-1.5 hover:bg-white/10 shrink-0 print:hidden"
           >
-            ← Full site
+            {crashed ? "Reload" : "← Full site"}
           </button>
         </div>
+
+        {crashed && (
+          <p className="mb-8 rounded-xl border border-amber-600/40 bg-amber-950/30 px-4 py-3 text-sm text-amber-200 print:hidden">
+            The interactive view failed to load, so this is the full text
+            version — everything is here.
+          </p>
+        )}
 
         {/* The full story, not the two-sentence version. This view exists for
             readers who want everything without clicking anything, so it would

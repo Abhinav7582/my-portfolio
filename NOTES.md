@@ -451,6 +451,55 @@ builds locally on the Mac. For a syntax and import check without touching
 `node_modules`, `npx esbuild src/main.jsx --bundle --loader:.css=empty
 --jsx=automatic` works from anywhere.
 
+## 9f. Production safety net (V2.8)
+
+### The gap this closes
+
+Every suite before this one tested pure functions. **They would all have
+passed while the site rendered a completely blank page.** A component throwing
+during render is invisible to lint, to the build, and to maths tests — and for
+a React SPA it is *the* characteristic production failure.
+
+### Render smoke test
+
+`test/run.mjs` now server-renders the real component tree under node and
+asserts on the HTML. No browser. React and friends stay external and the
+bundle is emitted inside the project, so node resolves them from local
+`node_modules` and there is exactly one React instance.
+
+It checks the app renders at all, that every `SECTION_IDS` anchor is present,
+that **Plain view contains every project and every role**, and that the crash
+fallback renders and explains itself.
+
+Two traps worth knowing if you extend it:
+
+- **Compare against HTML-escaped text.** React renders `&` as `&amp;`, and
+  seven project titles contain an ampersand. A literal match fails on all of
+  them and looks exactly like real missing content. There's an `esc()` helper.
+- **Suites must clean up their globals.** The sections suite stubs `window`
+  and `document` with just enough for the scroll maths. Left in place, the
+  render suite inherits a `document` with only `getElementById` and
+  react-dom/server dies on its first call.
+
+### Error boundary
+
+`ErrorBoundary` wraps `App` in `main.jsx`. Any uncaught render error falls back
+to **Plain view** — the same complete document, no animation, nothing to click.
+A crash degrades to a readable CV instead of a white screen.
+
+It also clears `body` overflow and padding on catch, since a dialog may have
+been open when it threw and the fallback would otherwise be unscrollable.
+
+`PlainView` is now imported **statically, not lazily**. A fallback that must
+fetch a chunk before rendering is the wrong shape for a crash handler —
+whatever broke may have broken chunk loading too. Bundle is a single 140KB
+gzipped file rather than 122KB + chunks.
+
+A test asserts `main.jsx` still wraps `App`, because if that wrapper is
+removed the fallback becomes unreachable dead code and nothing else notices.
+**What cannot be tested here** is the catch itself: `componentDidCatch` needs a
+client render, and `renderToString` rethrows.
+
 ## 9e. Two small fixes (V2.7)
 
 **Hero metrics were under the photo, not the headline.** They sat outside the

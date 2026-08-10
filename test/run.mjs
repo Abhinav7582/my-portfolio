@@ -16,9 +16,10 @@
  */
 
 import { execFileSync } from "node:child_process"
-import { mkdtempSync, rmSync } from "node:fs"
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
+import { pathToFileURL } from "node:url"
 
 const work = mkdtempSync(join(tmpdir(), "portfolio-test-"))
 let failures = 0
@@ -30,6 +31,11 @@ function fail(suite, msg) {
 }
 function pass(msg) {
   results.push(`  ✓ ${msg}`)
+}
+/** Report a failure without skipping a suite's cleanup. */
+function failAndRestore(restore, suite, msg) {
+  restore()
+  return fail(suite, msg)
 }
 
 /** Bundle a source module to plain ESM so node can import it. */
@@ -186,8 +192,17 @@ async function testSections() {
   const mod = await import(build("src/lib/sections.js", "sections.mjs"))
   const { SECTION_IDS, measureAnchors, phaseFromScroll, intensityFromPhase } = mod
 
+  // These stubs are minimal on purpose — just enough for the scroll maths.
+  // They must not survive this suite, or the render test inherits a `document`
+  // that has getElementById and nothing else, and react-dom/server falls over
+  // on the first call it makes. Suites clean up after themselves.
+  const restoreGlobals = () => {
+    delete globalThis.window
+    delete globalThis.document
+  }
+
   for (const id of SECTION_IDS) {
-    if (!layout[id]) return fail(S, `SECTION_IDS lists "${id}" but the test layout has no such section`)
+    if (!layout[id]) return failAndRestore(restoreGlobals, S, `SECTION_IDS lists "${id}" but the test layout has no such section`)
   }
 
   const anchors = measureAnchors()
@@ -197,10 +212,10 @@ async function testSections() {
     const p = phaseFromScroll(anchors)
     const i = intensityFromPhase(p)
     if (!Number.isFinite(p) || p < 0 || p > SECTION_IDS.length - 1)
-      return fail(S, `phase ${p} out of range at scrollY ${y}`)
+      return failAndRestore(restoreGlobals, S, `phase ${p} out of range at scrollY ${y}`)
     if (!Number.isFinite(i) || i < 0 || i > 1.001)
-      return fail(S, `intensity ${i} out of range at scrollY ${y}`)
-    if (p < prev - 1e-9) return fail(S, `phase went backwards at scrollY ${y}`)
+      return failAndRestore(restoreGlobals, S, `intensity ${i} out of range at scrollY ${y}`)
+    if (p < prev - 1e-9) return failAndRestore(restoreGlobals, S, `phase went backwards at scrollY ${y}`)
     prev = p
   }
   pass("phase is monotonic and in range across the whole page")
@@ -210,9 +225,10 @@ async function testSections() {
     globalThis.window.scrollY = (t0 + t1) / 2 - H / 2
     const p = phaseFromScroll(anchors)
     if (Math.abs(p - i) > 0.02)
-      return fail(S, `${id} centred gives phase ${p.toFixed(3)}, expected ${i}`)
+      return failAndRestore(restoreGlobals, S, `${id} centred gives phase ${p.toFixed(3)}, expected ${i}`)
   }
   pass(`all ${SECTION_IDS.length} sections anchor to their own integer phase`)
+  restoreGlobals()
 }
 
 // ---------------------------------------------------------------------------
@@ -290,12 +306,119 @@ async function testCrossFilter() {
 }
 
 // ---------------------------------------------------------------------------
+// 5. Render smoke test
+// ---------------------------------------------------------------------------
+/**
+ * The suites above all test pure functions, which means they would every one
+ * of them pass while the site rendered a completely blank page. A component
+ * throwing during render is invisible to lint, to the build, and to maths
+ * tests — and it is the characteristic production failure of a React SPA.
+ *
+ * So: server-render the real component tree under node and assert the output.
+ * No browser needed. React and friends stay external and the bundle is emitted
+ * inside the project, so node resolves them from the local node_modules and
+ * there is exactly one React instance.
+ */
+async function testRender() {
+  const S = "render"
+  const dir = join(process.cwd(), "test", ".tmp")
+  mkdirSync(dir, { recursive: true })
+
+  const entry = join(dir, "entry.jsx")
+  const out = join(dir, "bundle.mjs")
+  writeFileSync(
+    entry,
+    `import { renderToString } from "react-dom/server"
+import App from "../../src/App.jsx"
+import PlainView from "../../src/Components/PlainView.jsx"
+globalThis.__APP__ = renderToString(<App />)
+globalThis.__PLAIN__ = renderToString(<PlainView onExit={() => {}} />)
+globalThis.__CRASHED__ = renderToString(<PlainView crashed onExit={() => {}} />)
+`
+  )
+
+  execFileSync(
+    "npx",
+    [
+      "--yes",
+      "esbuild",
+      entry,
+      "--bundle",
+      `--outfile=${out}`,
+      "--jsx=automatic",
+      "--format=esm",
+      "--platform=node",
+      "--loader:.css=empty",
+      "--external:react",
+      "--external:react-dom",
+      "--external:react-dom/server",
+      "--external:react/jsx-runtime",
+      "--external:framer-motion",
+      "--external:react-type-animation",
+      "--log-level=error",
+    ],
+    { stdio: "inherit" }
+  )
+
+  await import(pathToFileURL(out).href)
+  const app = globalThis.__APP__
+  const plain = globalThis.__PLAIN__
+  const crashed = globalThis.__CRASHED__
+
+  if (!app || app.length < 5000) return fail(S, `App rendered only ${app?.length ?? 0} chars`)
+  pass(`App server-renders (${app.length.toLocaleString()} chars)`)
+
+  // Every section must exist, or the navbar and the background both mis-target.
+  const { SECTION_IDS } = await import(join(work, "sections.mjs"))
+  for (const id of SECTION_IDS) {
+    if (!app.includes(`id="${id}"`)) return fail(S, `rendered page is missing <section id="${id}">`)
+  }
+  pass(`all ${SECTION_IDS.length} section anchors present in the rendered page`)
+
+  // The escape hatch must be complete. If a project or role is added and Plain
+  // view doesn't show it, the fallback silently stops being the full document.
+  const { projects } = await import(join(work, "projects.mjs"))
+  const { experience } = await import(join(work, "experience.mjs"))
+
+  // Compare against escaped text. React renders `&` as `&amp;`, and seven of
+  // the project titles contain an ampersand — a literal match silently fails
+  // on all of them and looks alarmingly like real missing content.
+  const esc = (t) =>
+    t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+
+  const missingProjects = projects.filter((p) => !plain.includes(esc(p.title)))
+  if (missingProjects.length)
+    return fail(S, `Plain view missing project(s): ${missingProjects.map((p) => p.title).join("; ")}`)
+  const missingRoles = experience.filter((e) => !plain.includes(esc(e.role)))
+  if (missingRoles.length)
+    return fail(S, `Plain view missing role(s): ${missingRoles.map((e) => e.role).join("; ")}`)
+  pass(`Plain view contains all ${projects.length} projects and ${experience.length} roles`)
+
+  // The crash fallback must render and must say what happened.
+  if (!crashed.includes("failed to load"))
+    return fail(S, "crash fallback does not tell the reader what happened")
+  pass("crash fallback renders and explains itself")
+
+  // Whether the boundary actually *catches* cannot be verified here —
+  // componentDidCatch needs a client render, and renderToString rethrows. So
+  // assert the wiring instead: if someone removes the wrapper, the fallback
+  // above becomes unreachable dead code and nothing else would notice.
+  const mainSrc = readFileSync("src/main.jsx", "utf8")
+  if (!/<ErrorBoundary>[\s\S]*<App\s*\/>[\s\S]*<\/ErrorBoundary>/.test(mainSrc))
+    return fail(S, "main.jsx no longer wraps <App/> in <ErrorBoundary> — crash fallback is dead code")
+  pass("ErrorBoundary wraps App in main.jsx")
+
+  rmSync(dir, { recursive: true, force: true })
+}
+
+// ---------------------------------------------------------------------------
 
 try {
   await testCosmos()
   await testSections()
   await testWiring()
   await testCrossFilter()
+  await testRender()
 } catch (err) {
   failures++
   results.push(`  ✗ threw: ${err.message}`)

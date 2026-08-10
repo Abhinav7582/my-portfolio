@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { MotionConfig } from "framer-motion"
 import Navbar from "./Components/Navbar"
 import ScrollProgress from "./Components/ScrollProgress"
@@ -10,8 +10,10 @@ import CosmicField from "./Components/CosmicField"
 import { scrollToId } from "./lib/scroll"
 import "./App.css"
 
-// Kept out of the main bundle — most visitors never open it.
-const PlainView = lazy(() => import("./Components/PlainView"))
+// Imported statically rather than lazily. ErrorBoundary uses PlainView as its
+// crash fallback, and a fallback that must fetch a chunk before it can render
+// is the wrong shape for a crash handler. Costs a few KB gzipped.
+import PlainView from "./Components/PlainView"
 
 // V2 structure: six sections became four.
 //   hero · growth (about + experience) · work (projects) · contact (+ publication)
@@ -52,11 +54,7 @@ function App() {
   const togglePlain = useCallback(() => setPlain((p) => !p), [])
 
   if (plain) {
-    return (
-      <Suspense fallback={<div className="min-h-screen bg-[#0b0d14]" />}>
-        <PlainView onExit={togglePlain} />
-      </Suspense>
-    )
+    return <PlainView onExit={togglePlain} />
   }
 
   return (

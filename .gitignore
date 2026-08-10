@@ -25,3 +25,5 @@ dist-ssr
 
 # Local scratch copies of old background experiments
 *.backup
+
+test/.tmp/
